@@ -1,27 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background:   #070b18;
-  --foreground:   #f0ede8;
-  --accent:       #8b7cf8;
-  --accent-dim:   #5b48d9;
-  --gold:         #c9a96e;
-  --border:       #1e1b38;
-  --border-soft:  rgba(139, 124, 248, 0.20);
-  --surface:      #0c0e1f;
-  --muted:        #7e7aa8;
+  --background:        #070b18;
+  --foreground:        #f0ede8;
+  --accent:            #8b7cf8;
+  --accent-dim:        #5b48d9;
+  --gold:              #c9a96e;
+  --border:            #1e1b38;
+  --border-soft:       rgba(139, 124, 248, 0.20);
+  --border-gold-soft:  rgba(201, 169, 110, 0.28);
+  --muted:             #7e7aa8;
+  --muted-dim:         rgba(126, 122, 168, 0.60);
+  --surface:           #0c0e1f;
 }
 
 @theme inline {
-  --color-background:   var(--background);
-  --color-foreground:   var(--foreground);
-  --color-accent:       var(--accent);
-  --color-accent-dim:   var(--accent-dim);
-  --color-gold:         var(--gold);
-  --color-border:       var(--border);
-  --color-border-soft:  var(--border-soft);
-  --color-surface:      var(--surface);
-  --color-muted:        var(--muted);
+  --color-background:       var(--background);
+  --color-foreground:       var(--foreground);
+  --color-accent:           var(--accent);
+  --color-accent-dim:       var(--accent-dim);
+  --color-gold:             var(--gold);
+  --color-border:           var(--border);
+  --color-border-soft:      var(--border-soft);
+  --color-border-gold-soft: var(--border-gold-soft);
+  --color-muted:            var(--muted);
+  --color-muted-dim:        var(--muted-dim);
+  --color-surface:          var(--surface);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -31,13 +35,210 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   background-image:
-    radial-gradient(ellipse 70% 50% at 50% -5%,  rgba(139, 124, 248, 0.15) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 30% at 50% 110%, rgba(201, 169, 110, 0.07) 0%, transparent 60%);
-  background-attachment: fixed;
+    /* Violet crown — atmospheric top light */
+    radial-gradient(ellipse 70% 50% at 50% -5%,
+      rgba(139, 124, 248, 0.15) 0%, transparent 65%),
+    /* Gold undertone — warm floor reflection */
+    radial-gradient(ellipse 50% 30% at 50% 110%,
+      rgba(201, 169, 110, 0.07) 0%, transparent 60%);
+}
+
+/* WishIdea brand signature — creative spark expanding into a universe.
+   CSS-only, decorative, invisible to assistive technology. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    /* Gold spark — tiny origin point, upper-centre */
+    radial-gradient(circle 2px at 50% 22%, rgba(201, 169, 110, 0.50) 0%, transparent 100%),
+    /* Violet seed — offset, slightly higher */
+    radial-gradient(circle 2px at 51.5% 20%, rgba(139, 124, 248, 0.40) 0%, transparent 100%),
+    /* Diffuse inner bloom — universe expanding, no hard edge */
+    radial-gradient(ellipse 40% 24% at 50% 22%,
+      rgba(139, 124, 248, 0.04) 0%, transparent 100%),
+    /* Diffuse mid bloom */
+    radial-gradient(ellipse 80% 45% at 50% 22%,
+      rgba(139, 124, 248, 0.025) 0%, transparent 100%),
+    /* Diffuse outer bloom — barely perceptible */
+    radial-gradient(ellipse 130% 70% at 50% 22%,
+      rgba(139, 124, 248, 0.015) 0%, transparent 100%);
+}
+
+/* Ensure content sits above pseudo-element */
+main {
+  position: relative;
+  z-index: 1;
 }
 
 /* Visible focus ring for keyboard navigation */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
+}
+
+/* ── Hero intro animations ─────────────────────────────────────────────── */
+
+/* Brand entrance — opacity only.
+   transform is intentionally absent: the FLIP technique has exclusive
+   control of transform on the brand element during brand-large and
+   brand-settle. Animating transform here would conflict with the
+   measured displacement value. */
+@keyframes wc-brand-enter {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Headline lines and tagline — fade up into position */
+@keyframes wc-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.wc-brand-enter {
+  animation: wc-brand-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Applied during brand-settle: enables the CSS transition that glides
+   the brand element from its displaced position back to the header. */
+.wc-brand-settle {
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wc-fade-up {
+  animation: wc-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── Collapse — cinematic closing sequence ─────────────────────────────── */
+
+/* Tagline fades first, no stagger delay */
+.wc-collapse-tagline {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+/* Headline lines fade and contract toward the brand above.
+   wc-fade-up is removed when these classes are applied, so there is no
+   animation/transition property conflict. The browser transitions from
+   the currently painted state (opacity:1, translateY:0) to the values
+   declared here. */
+.wc-collapse-line {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+/* Staggered reverse order: line-3 collapses first, line-1 last.
+   The collapse step lasts 1000ms; the last transition completes at
+   340 + 300 = 640ms — well before the nodes are removed at complete. */
+.wc-collapse-line-3 { transition-delay: 100ms; }
+.wc-collapse-line-2 { transition-delay: 220ms; }
+.wc-collapse-line-1 { transition-delay: 340ms; }
+
+/* ── Brand bloom — final condensing flourish after collapse ────────────── */
+/* scale: 0.85 → 1.12 → 1.00. Glow appears only near the peak (55%) and
+   fully disappears by 100%. No position shift. */
+@keyframes wc-brand-bloom {
+  0%   { transform: scale(0.72); filter: none; }
+  55%  { transform: scale(1.42);
+         filter: drop-shadow(0 0 10px rgba(139, 124, 248, 0.50))
+                 drop-shadow(0 0 5px rgba(201, 169, 110, 0.24)); }
+  100% { transform: scale(3.00); filter: none; }
+}
+
+.wc-brand-bloom {
+  animation: wc-brand-bloom 850ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* ── CTA loading glow pulse ────────────────────────────────────────────── */
+@keyframes wc-pulse-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 48px rgba(139, 124, 248, 0.35),
+      0 0 12px rgba(201, 169, 110, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+  50% {
+    box-shadow:
+      0 0 72px rgba(139, 124, 248, 0.55),
+      0 0 24px rgba(201, 169, 110, 0.20),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+}
+
+.wc-loading-btn {
+  animation: wc-pulse-glow 2s ease-in-out infinite;
+}
+
+/* Loading activity shimmer */
+.wc-loading-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.wc-loading-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 42%;
+  transform: translateX(-160%);
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 25%,
+    rgba(255, 255, 255, 0.32) 50%,
+    rgba(201, 169, 110, 0.16) 62%,
+    transparent 100%
+  );
+  animation: wc-loading-shimmer 1.35s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes wc-loading-shimmer {
+  0% {
+    transform: translateX(-160%);
+  }
+
+  100% {
+    transform: translateX(340%);
+  }
+}
+
+/* ── Reduced-motion overrides ──────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .wc-brand-enter,
+  .wc-fade-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .wc-brand-settle {
+    transition: none;
+  }
+
+  .wc-collapse-tagline,
+  .wc-collapse-line {
+    transition: none;
+  }
+
+  .wc-brand-bloom {
+    animation: none;
+    transform: none;
+    filter: none;
+  }
+
+  .wc-loading-btn {
+    animation: none;
+  }
+
+  .wc-loading-btn::after {
+    animation: none;
+    transform: translateX(140%);
+    opacity: 0.35;
+  }
 }

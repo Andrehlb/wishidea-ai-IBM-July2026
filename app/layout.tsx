@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WishCraft",
+  title: "WishIdea",
   description: "Your idea. Your voice. Your universe.",
 };
 

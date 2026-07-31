@@ -303,7 +303,7 @@ Submission components include:
 
 ## Demo
 
-Demo video: **to be added after publication**
+Demo video: https://youtu.be/Pt1WfpbaZMs
 
 ## Author
 
